@@ -1,75 +1,68 @@
 #include <string>
-#include <fstream>
 #include <iostream>
-#include <sstream>
+#include <fstream>
+#include <exception>
+#include <vector>
 
-char cur_ch_ = 'c';
+#include "testParseString.cpp"
 
-void nextChar(std::istream& file)
+std::string parseArray(std::istream& file)
 {
-    char ch = file.get();
-    if (ch == '#') {
-        ch = file.get();
-        while (ch != '\n' && ch != EOF)
-        {
-            ch = file.get();
+    expect('[');
+    std::vector<std::string> array;
+    std::string result;
+    // start
+    nextBlock(file);
+    while (!notEndAndCurCharIs(']'))
+    {
+        if (cur() == '[') {
+            array.push_back(parseArray(file));
+        } else if (cur() == '"') {
+            array.push_back(parseBasicString(file));
+        } else if (cur() == '\'') {
+            array.push_back(parseLiteralString(file));
+        } else {
+            array.push_back(parseWord(file));
+        }
+        
+        if (cur() == ',') {
+            nextBlock(file);
         }
     }
-    cur_ch_ = ch;
-}
 
-char cur()
-{
-    return cur_ch_;
-}
+    expect(']');
 
-void nextBlock(std::istream& file)
-{
-    nextChar(file);
-    while ((cur() == ' ' || cur() == '\n') && cur() != EOF)
-    {
-        nextChar(file);
+    result += "[";
+    for (size_t i = 0; i < array.size(); ++i) {
+        result += array[i];
+        if (i + 1 < array.size()) {
+            result += ",";
+        }
     }
+    result += "]";
+
+    return result;
 }
 
-bool isWordChar(char ch)
-{
-    if (ch <= '9' && ch >= '0' ||
-        ch <= 'z' && ch >= 'a' ||
-        ch <= 'Z' && ch >= 'A' ||
-        ch == '_' ||
-        ch == '-' ||
-        ch == '.') {
-        return true;
-    }
-
-    return false;
-}
-
-std::string parseWord(std::istream& file)
-{
-    std::string word;
-    while (cur() != EOF && isWordChar(cur())) {
-        word += cur();
-        nextChar(file);
-    }
-
-    return word;
-}
 
 int main()
 {
-    std::fstream file("../example.toml");
+    std::ifstream file("../example.toml");
 
     if (file.fail()) {
         std::cout << "open file failed" << std::endl;
+        return -1;
     }
 
     while (cur() != EOF)
     {
         nextBlock(file);
-        std::cout << "[current location]" << cur_ch_ << std::endl;
-        std::string word = parseWord(file);
-        std::cout << word << std::endl;
+        if (cur() == '[') {
+            std::string a;
+            a = parseArray(file);
+            std::cout << a;
+        }
+        parseWord(file);
     }
+
 }

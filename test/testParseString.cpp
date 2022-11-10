@@ -34,7 +34,7 @@ bool notEndAndCurCharIs(char ch)
     return (cur() == EOF || cur() == ch);
 }
 
-std::string parseBasicString(std::ifstream& file)
+std::string parseBasicString(std::istream& file)
 {
     expect('"');
    
@@ -60,11 +60,12 @@ std::string parseBasicString(std::ifstream& file)
     }
 
     expect('"');
+    nextBlock(file);
 
     return str;
 }
 
-std::string parseLiteralString(std::ifstream& file)
+std::string parseLiteralString(std::istream& file)
 {
     expect('\'');
     
@@ -79,42 +80,43 @@ std::string parseLiteralString(std::ifstream& file)
     }
 
     expect('\'');
+    nextBlock(file);
     
     return str;
 }
 
-int main()
-{
-    std::ifstream file("../example.toml");
+// int main()
+// {
+//     std::ifstream file("../example.toml");
 
-    if (file.fail()) {
-        std::cout << "open file failed" << std::endl;
-        return -1;
-    }
+//     if (file.fail()) {
+//         std::cout << "open file failed" << std::endl;
+//         return -1;
+//     }
 
-    // now we are at ", start of a the string "TOML Example"
-    while (!(notEndAndCurCharIs('"') || notEndAndCurCharIs('\'')))
-    {
-        nextBlock(file);
-        try
-        {
-            if (cur() == '"') {
-                std::string str = parseBasicString(file);
-                nextBlock(file);
-                std::cout << str << std::endl;
-            }
-            else if (cur() == '\'') {
-                std::string str = parseLiteralString(file);
-                nextBlock(file);
-                std::cout << str << std::endl;
-            }           
-        }
-        catch(const Error& e)
-        {
-            std::cout << e.what() << '\n';
-        }
+//     // now we are at ", start of a the string "TOML Example"
+//     while (!(notEndAndCurCharIs('"') || notEndAndCurCharIs('\'')))
+//     {
+//         nextBlock(file);
+//         try
+//         {
+//             if (cur() == '"') {
+//                 std::string str = parseBasicString(file);
+//                 nextBlock(file);
+//                 std::cout << str << std::endl;
+//             }
+//             else if (cur() == '\'') {
+//                 std::string str = parseLiteralString(file);
+//                 nextBlock(file);
+//                 std::cout << str << std::endl;
+//             }           
+//         }
+//         catch(const Error& e)
+//         {
+//             std::cout << e.what() << '\n';
+//         }
         
 
-    }
+//     }
 
-}
+// }
