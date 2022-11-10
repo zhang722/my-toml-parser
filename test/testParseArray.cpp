@@ -6,6 +6,7 @@
 
 #include "testParseString.cpp"
 
+
 std::string parseArray(std::istream& file)
 {
     expect('[');
@@ -31,6 +32,7 @@ std::string parseArray(std::istream& file)
     }
 
     expect(']');
+    nextBlock(file);
 
     result += "[";
     for (size_t i = 0; i < array.size(); ++i) {
@@ -45,24 +47,24 @@ std::string parseArray(std::istream& file)
 }
 
 
-int main()
-{
-    std::ifstream file("../example.toml");
+// int main()
+// {
+//     std::ifstream file("../example.toml");
 
-    if (file.fail()) {
-        std::cout << "open file failed" << std::endl;
-        return -1;
-    }
+//     if (file.fail()) {
+//         std::cout << "open file failed" << std::endl;
+//         return -1;
+//     }
 
-    while (cur() != EOF)
-    {
-        nextBlock(file);
-        if (cur() == '[') {
-            std::string a;
-            a = parseArray(file);
-            std::cout << a;
-        }
-        parseWord(file);
-    }
+//     while (cur() != EOF)
+//     {
+//         nextBlock(file);
+//         if (cur() == '[') {
+//             std::string a;
+//             a = parseArray(file);
+//             std::cout << a;
+//         }
+//         parseWord(file);
+//     }
 
-}
+// }
