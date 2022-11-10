@@ -10,7 +10,7 @@ void nextChar(std::istream& file)
     char ch = file.get();
     if (ch == '#') {
         ch = file.get();
-        while (ch != '\n' && !file.eof())
+        while (ch != '\n' && ch != EOF)
         {
             ch = file.get();
         }
@@ -32,13 +32,14 @@ void nextBlock(std::istream& file)
     }
 }
 
-bool wordEnd()
+bool isWordChar(char ch)
 {
-    char ch = cur();
-    if (!(ch < '9' && ch > '0' ||
-          ch < 'z' && ch > 'a' ||
-          ch < 'Z' && ch > 'A' ||
-          ch == '_')) {
+    if (ch <= '9' && ch >= '0' ||
+        ch <= 'z' && ch >= 'a' ||
+        ch <= 'Z' && ch >= 'A' ||
+        ch == '_' ||
+        ch == '-' ||
+        ch == '.') {
         return true;
     }
 
@@ -48,20 +49,27 @@ bool wordEnd()
 std::string parseWord(std::istream& file)
 {
     std::string word;
-    while (!wordEnd() && file.eof()) {
+    while (cur() != EOF && isWordChar(cur())) {
         word += cur();
         nextChar(file);
     }
+
+    return word;
 }
 
 int main()
 {
-    std::stringstream file;
-    file << "123  456\n ";
-    // nextChar(file);
-    // std::cout << file.get() << std::endl;
-    nextBlock(file);
-    std::string word = parseWord(file);
-    std::cout << word << std::endl;
-    std::cout << cur_ch_ << std::endl;
+    std::fstream file("../example.toml");
+
+    if (file.fail()) {
+        std::cout << "open file failed" << std::endl;
+    }
+
+    while (cur() != EOF)
+    {
+        nextBlock(file);
+        std::cout << "[current location]" << cur_ch_ << std::endl;
+        std::string word = parseWord(file);
+        std::cout << word << std::endl;
+    }
 }
