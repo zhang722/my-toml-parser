@@ -13,4 +13,6 @@ include_directories(./include)
 
 add_executable(test_next_block ./test/testNextBlock.cpp)
 # add_executable(test_parse_string ./test/testParseString.cpp)
-add_executable(test_parse_array ./test/testParseArray.cpp)
+# add_executable(test_parse_array ./test/testParseArray.cpp)
+# add_executable(test_parse_map ./test/testParseMap.cpp)
+add_executable(test_parse_doc ./test/testParseDoc.cpp)

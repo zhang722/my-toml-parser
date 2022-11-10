@@ -54,7 +54,8 @@ bool isWordChar(char ch)
         ch <= 'Z' && ch >= 'A' ||
         ch == '_' ||
         ch == '-' ||
-        ch == '.') {
+        ch == '.' ||
+        ch == ':') {
         return true;
     }
 

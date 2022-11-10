@@ -52,30 +52,32 @@ std::string parseMap(std::istream& file)
         result += e.second;
         result += ",";
     }
+    // TODO: use string_view to acclerate it.
+    result = result.substr(0, result.length() - 1);
     result += "}";
 
     return result;
 }
 
 
-int main()
-{
-    std::ifstream file("../example.toml");
+// int main()
+// {
+//     std::ifstream file("../example.toml");
 
-    if (file.fail()) {
-        std::cout << "open file failed" << std::endl;
-        return -1;
-    }
+//     if (file.fail()) {
+//         std::cout << "open file failed" << std::endl;
+//         return -1;
+//     }
 
-    while (cur() != EOF)
-    {
-        nextBlock(file);
-        if (cur() == '{') {
-            std::string a;
-            a = parseMap(file);
-            std::cout << a;
-        }
-        parseWord(file);
-    }
+//     while (cur() != EOF)
+//     {
+//         nextBlock(file);
+//         if (cur() == '{') {
+//             std::string a;
+//             a = parseMap(file);
+//             std::cout << a;
+//         }
+//         parseWord(file);
+//     }
 
-}
+// }
