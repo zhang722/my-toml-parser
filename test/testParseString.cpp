@@ -36,25 +36,18 @@ bool notEndAndCurCharIs(char ch)
 
 std::string parseBasicString(std::ifstream& file)
 {
-    try
-    {
-        expect('"');
-    }
-    catch(const Error& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-    
+    expect('"');
+   
     std::string str;
     
     // start
     basicNextChar(file);
 
-    while (!notEndAndCurCharIs('"'))
+    while (!notEndAndCurCharIs('"') && cur() != '\n')
     {
         char ch = cur();
         if (ch == '\\') {
-            nextChar(file);
+            basicNextChar(file);
             char ch2 = cur();
             if (ch2 == 't') ch = '\t';
             else if (ch2 == 'n') ch = '\n';
@@ -65,31 +58,28 @@ std::string parseBasicString(std::ifstream& file)
         str += ch;
         basicNextChar(file);
     }
-    try
-    {
-        expect('"');
-    }
-    catch(const Error& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+
+    expect('"');
+
     return str;
 }
 
 std::string parseLiteralString(std::ifstream& file)
 {
     expect('\'');
-    std::string str;
     
-    // start
-    nextChar(file);
+    std::string str;
 
-    while (!notEndAndCurCharIs('\''))
+    // start
+    basicNextChar(file);
+    while (!notEndAndCurCharIs('\'') && cur() != '\n')
     {
         str += cur();
-        nextChar(file);
+        basicNextChar(file);
     }
+
     expect('\'');
+    
     return str;
 }
 
