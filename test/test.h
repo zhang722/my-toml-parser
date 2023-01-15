@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "testStdAny.cpp"
+
 char cur_ch_ = 'c';
 size_t cur_line_ = 1;
 

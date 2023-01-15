@@ -34,7 +34,8 @@ bool notEndAndCurCharIs(char ch)
     return (cur() == EOF || cur() == ch);
 }
 
-std::string parseBasicString(std::istream& file)
+std::shared_ptr<Node>
+parseBasicString(std::istream& file)
 {
     expect('"');
    
@@ -62,10 +63,11 @@ std::string parseBasicString(std::istream& file)
     expect('"');
     nextBlock(file);
 
-    return str;
+    return std::make_shared<Scalar<std::string>>(str);
 }
 
-std::string parseLiteralString(std::istream& file)
+std::shared_ptr<Node>
+parseLiteralString(std::istream& file)
 {
     expect('\'');
     
@@ -81,8 +83,8 @@ std::string parseLiteralString(std::istream& file)
 
     expect('\'');
     nextBlock(file);
-    
-    return str;
+
+    return std::make_shared<Scalar<std::string>>(str);
 }
 
 // int main()

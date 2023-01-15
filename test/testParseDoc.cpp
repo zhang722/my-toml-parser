@@ -1,3 +1,6 @@
+#ifndef __STD_DOC_CPP__
+#define __STD_DOC_CPP__
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -7,6 +10,7 @@
 
 
 #include "testParseMap.cpp"
+#include "testRegex.cpp"
 
 std::string parseGroup(std::istream& file)
 {
@@ -32,9 +36,10 @@ std::string parseAssignment(std::istream& file)
     return "=";
 }
 
-std::string parseValue(std::istream& file)
+std::shared_ptr<Node>
+parseValue(std::istream& file)
 {
-    std::string value;
+    std::shared_ptr<Node> value;
     if (cur() == '{') {
         value = parseMap(file);
     } else if (cur() == '[') {
@@ -44,10 +49,17 @@ std::string parseValue(std::istream& file)
     } else if (cur() == '\'') {
         value = parseLiteralString(file);
     } else {
-        value = parseWord(file);
+        std::string str = parseWord(file);
+        value = parseOthers(str);
     }
 
     return value;
+}
+
+template <typename T>
+std::shared_ptr<Node> get(const Doc& doc, const std::string& key)
+{
+    
 }
 
 
@@ -60,6 +72,7 @@ int main()
         return -1;
     }
     std::stringstream ss;
+    Doc doc;
 
     nextBlock(file);
     std::string group;
@@ -76,10 +89,16 @@ int main()
         std::string assign = parseAssignment(file);
         // std::cout << "assign:" << assign << std::endl;
         ss << assign;
-        std::string value = parseValue(file);
+        std::shared_ptr<Node> value = parseValue(file);
+
         // std::cout << "value:" << value << std::endl;
         ss << value;
         ss << "\n";
+
+        doc.insert({group + key, value});
     }
-    std::cout << ss.str();
+    // std::cout << ss.str();
+    std::cout << doc.asString();
 }
+
+#endif

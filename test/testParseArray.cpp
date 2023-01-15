@@ -5,25 +5,33 @@
 #include <vector>
 
 #include "testParseString.cpp"
+#include "testRegex.cpp"
 
 
-std::string parseArray(std::istream& file)
+std::shared_ptr<Node>
+parseArray(std::istream& file)
 {
     expect('[');
-    std::vector<std::string> array;
     std::string result;
+    Array array;
     // start
     nextBlock(file);
     while (!notEndAndCurCharIs(']'))
     {
+        std::shared_ptr<Node> value;
         if (cur() == '[') {
-            array.push_back(parseArray(file));
+            value = parseArray(file); 
+            array.push_back(value);
         } else if (cur() == '"') {
-            array.push_back(parseBasicString(file));
+            value = parseBasicString(file); 
+            array.push_back(value);
         } else if (cur() == '\'') {
-            array.push_back(parseLiteralString(file));
+            value = parseLiteralString(file); 
+            array.push_back(value);
         } else {
-            array.push_back(parseWord(file));
+            std::string str = parseWord(file);
+            value = parseOthers(str); 
+            array.push_back(value);
         }
         
         if (cur() == ',') {
@@ -34,16 +42,7 @@ std::string parseArray(std::istream& file)
     expect(']');
     nextBlock(file);
 
-    result += "[";
-    for (size_t i = 0; i < array.size(); ++i) {
-        result += array[i];
-        if (i + 1 < array.size()) {
-            result += ",";
-        }
-    }
-    result += "]";
-
-    return result;
+    return std::make_shared<Array>(array);
 }
 
 

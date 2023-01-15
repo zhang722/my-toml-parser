@@ -2,15 +2,15 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
-#include <map>
+#include <unordered_map>
 
 #include "testParseArray.cpp"
 
-std::string parseMap(std::istream& file)
+std::shared_ptr<Node>
+parseMap(std::istream& file)
 {
     expect('{');
-    std::map<std::string, std::string> m;
-    std::string result;
+    Table t;
     // start
     nextBlock(file);
     while (!notEndAndCurCharIs('}'))
@@ -21,21 +21,26 @@ std::string parseMap(std::istream& file)
 
         expect('=');
         nextBlock(file);
-        std::string value;
+        std::shared_ptr<Node> value;
 
         if (cur() == '{') {
             value = parseMap(file);
+            t.insert(key, value);
         } else if (cur() == '[') {
             value = parseArray(file);
+            t.insert(key, value);
         } else if (cur() == '"') {
             value = parseBasicString(file);
+            t.insert(key, value);
         } else if (cur() == '\'') {
             value = parseLiteralString(file);
+            t.insert(key, value);
         } else {
-            value = parseWord(file);
+            std::string str = parseWord(file);
+            value = parseOthers(str);
+            t.insert(key, value);
         }
 
-        m.insert(pair<string, string>(key, value));
         
         if (cur() == ',') {
             nextBlock(file);
@@ -45,18 +50,7 @@ std::string parseMap(std::istream& file)
     expect('}');
     nextBlock(file);
 
-    result += "{";
-    for (auto& e : m) {
-        result += e.first;
-        result += "=";
-        result += e.second;
-        result += ",";
-    }
-    // TODO: use string_view to acclerate it.
-    result = result.substr(0, result.length() - 1);
-    result += "}";
-
-    return result;
+    return std::make_shared<Table>(t);
 }
 
 
