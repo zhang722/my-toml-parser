@@ -10,6 +10,9 @@
 #include <memory>
 #include <type_traits>
 #include <initializer_list>
+#include <exception>
+
+#include "testParseString.cpp"
 
 struct Date
 {
@@ -76,6 +79,8 @@ struct Datetime : public Date, public Time
         return Date::asString() + "T" + Time::asString();
     }
 };
+
+class Error;
 
 class Node
 {
@@ -161,6 +166,16 @@ public:
 
     ~Scalar() {}
 
+    template <typename T1>
+    T as()
+    {
+        if (std::is_same<T, T1>::value) {
+            return data_;
+        } else {
+            throw Error("[type error]");
+        }
+    }
+
 
     virtual std::string asString() 
     {
@@ -199,6 +214,17 @@ public:
     void push_back(std::shared_ptr<Node> value)
     {
         data_.push_back(value);
+    }
+
+    template <typename T>
+    std::shared_ptr<T> at(size_t idx)
+    {
+        auto it = data_.at(idx);
+        std::shared_ptr<T> tmp = std::dynamic_pointer_cast<T>(it);
+        if (!tmp) {
+            throw Error("[type error]");
+        }
+        return tmp;
     }
 
     virtual std::string asString() 
@@ -246,6 +272,20 @@ public:
     {
         data_.insert(p);
     }
+    
+    template <typename T>
+    std::shared_ptr<T> get(const std::string& key)
+    {
+        auto it = data_.find(key);
+        if (it == data_.end()) {
+            throw Error("[cann't find key: " + key + "]");
+        }
+        std::shared_ptr<T> tmp = std::dynamic_pointer_cast<T>(it->second);
+        if (!tmp) {
+            throw Error("[type error]");
+        }
+        return tmp;
+    }
 
     virtual std::string asString()
     {
@@ -263,6 +303,8 @@ public:
     }
 
 };
+
+
 
 class Doc
 {
@@ -293,9 +335,18 @@ public:
         data_.insert(p);
     }
 
-    auto get()
+    template <typename T>
+    std::shared_ptr<T> get(const std::string& key)
     {
-        
+        auto it = data_.find(key);
+        if (it == data_.end()) {
+            throw Error("[cann't find key: " + key + "]");
+        }
+        std::shared_ptr<T> tmp = std::dynamic_pointer_cast<T>(it->second);
+        if (!tmp) {
+            throw Error("[type error]");
+        }
+        return tmp;
     }
 
     std::string asString()

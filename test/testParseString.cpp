@@ -1,3 +1,6 @@
+#ifndef __PARSE_STRING__
+#define __PARSE_STRING__
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -122,3 +125,5 @@ parseLiteralString(std::istream& file)
 //     }
 
 // }
+
+#endif

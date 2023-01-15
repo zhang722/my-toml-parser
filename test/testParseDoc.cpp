@@ -56,12 +56,6 @@ parseValue(std::istream& file)
     return value;
 }
 
-template <typename T>
-std::shared_ptr<Node> get(const Doc& doc, const std::string& key)
-{
-    
-}
-
 
 int main()
 {
@@ -99,6 +93,12 @@ int main()
     }
     // std::cout << ss.str();
     std::cout << doc.asString();
+    auto a = doc.get<Array>("clients.data");
+    auto b = a->at<Array>(1);
+    std::cout << b->asString() << std::endl;
+    std::cout << b->asString() << std::endl;
+    auto c = b->at<Scalar<int>>(0);
+    std::cout << c->as<int>() << std::endl;
 }
 
 #endif
