@@ -7,5 +7,10 @@ set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
 include_directories(./include)
 
 add_library(toml SHARED
-    ./src/parser.cpp
+    src/parser.cpp
+)
+
+add_executable(example
+    example/example.cpp
+    src/parser.cpp
 )
