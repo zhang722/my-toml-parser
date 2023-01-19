@@ -24,10 +24,10 @@ Doc Parser::parse()
     std::string group;
     while (cur() != EOF)
     {
-        while (cur() == '[') {
+        if (cur() == '[') {
             group = parseGroup() + ".";
-            // std::cout << "group:" << group << std::endl;
         }
+        
         std::string key = parseKey();
         std::string assign = parseAssignment();
         std::shared_ptr<Node> value = parseValue();
@@ -67,7 +67,7 @@ void Parser::nextChar()
 void Parser::nextBlock()
 {
     nextChar();
-    while ((cur() == ' ' || cur() == '\n') && cur() != EOF)
+    while ((cur() == ' ' || cur() == '\n' || cur() == '\t') && cur() != EOF)
     {
         nextChar();
     }
